@@ -1,0 +1,21 @@
+<p><%= flash[:notice] %></p>
+<form action="/process_register" method="post">
+    <input type="hidden" name="authenticity_token" value="<%=  form_authenticity_token %>">
+
+    <label for="first_name">First Name:</label>
+    <input type="text" name="register[first_name]">
+
+    <label for="last_name">Last Name:</label>
+    <input type="text" name="register[last_name]">
+
+    <label for="email">Email:</label>
+    <input type="text" name="register[email]">
+
+    <label for="password">Password:</label>
+    <input type="password" name="register[password]">
+
+    <label for="confirm_password">Confirm Password:</label>
+    <input type="password" name="register[confirm_password]">
+
+    <input type="submit" value="Register">
+</form>

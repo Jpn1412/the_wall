@@ -1,0 +1,59 @@
+<%= @user['first_name'] %> <%= @user['last_name'] %>
+
+<a href="/logout">Logout</a>
+
+<p><%= flash[:notice] %></p>
+<form action="/process_message" method="post">
+    <input type="hidden" name="authenticity_token" value="<%=  form_authenticity_token %>">
+    <input type="hidden" name="message[user_id]" value="<%= @user['id'] %>">
+    <label for="content">Message:</label>
+    <textarea name="message[content]"></textarea>
+
+    <input type="submit" value="Submit">
+</form>
+
+<% @data.each do |message| %>
+    <div>
+        <p><%= message['message_author_first_name'] %> <%= message['message_author_last_name'] %> (<%= message['message_updated_at'] %>)</p>
+        <p>Message: <%= message['message_content'] %></p>
+        <% if message['message_author_id'] ==  @user['id'] %> 
+            <a href="/edit_message/<%= message['message_id'] %>">Edit Message</a>
+            <form action="/delete_message" method="post">
+                <input type="hidden" name="_method" value="delete">
+                <input type="hidden" name="authenticity_token" value="<%=  form_authenticity_token %>">
+                <input type="hidden" name="message_delete[message_id]" value="<%= message['message_id'] %>">
+                <input type="hidden" name="message_delete[user_id]" value="<%= @user['id'] %>">
+                <input type="submit" value="Delete Message">
+            </form>
+        <% end %>
+
+        <% if message['comments'].present? %>
+            <% message['comments'].each do |comment|%>
+            <div>
+                <p><%= comment['comment_author_first_name'] %> <%= comment['comment_author_last_name'] %> (<%= comment['comment_updated_at'] %>)</p>
+                <p>Comment: <%= comment['comment_content'] %></p>
+                <% if comment['comment_author_id'] ==  @user['id'] %> 
+                    <a href="/edit_comment/<%= comment['comment_id'] %>">Edit Comment</a>
+                    <form action="/delete_comment" method="post">
+                        <input type="hidden" name="_method" value="delete">
+                        <input type="hidden" name="authenticity_token" value="<%=  form_authenticity_token %>">
+                        <input type="hidden" name="comment_delete[user_id]" value="<%= @user['id'] %>">
+                        <input type="hidden" name="comment_delete[comment_id]" value="<%= comment['comment_id'] %>">
+                        <input type="submit" value="Delete Message">
+                    </form>
+                <% end %>
+            </div>
+            <% end %>
+        <% end %>
+
+        <form action="/process_comment" method="post">
+            <input type="hidden" name="authenticity_token" value="<%=  form_authenticity_token %>">
+            <input type="hidden" name="comment[message_id]" value="<%= message['message_id'] %>">
+            <input type="hidden" name="comment[user_id]" value="<%= @user['id'] %>">
+            <label for="content">Comment:</label>
+            <textarea name="comment[content]"></textarea>
+
+            <input type="submit" value="Submit">
+        </form>
+    </div> 
+<% end %>
